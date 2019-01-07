@@ -39,13 +39,8 @@ namespace EXOFiddlerInspector.Services
         /// <returns>Bool</returns>
         public static async Task InitializeAsync()
         {
-            if (Preferences.IsDeveloper())
+            if (!IsInitialized)
             {
-                return;
-            }
-
-            else if (!IsInitialized)
-            {               
                 try
                 {
                     ExceptionCounter = 0;
@@ -62,7 +57,7 @@ namespace EXOFiddlerInspector.Services
 
                     Client.Context.Device.OperatingSystem = Environment.OSVersion.ToString();
 
-                    Client.Context.Component.Version = ActivationService.GetAppVersion();
+                    Client.Context.Component.Version = Preferences.AppVersion;
 
                     TrackEvent("UserSession");
 
@@ -71,7 +66,7 @@ namespace EXOFiddlerInspector.Services
                 catch
                 {
                     // TODO add exception logic
-                }              
+                }
             }
         }
 

@@ -31,7 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Fiddler">
-      <HintPath>..\..\..\..\AppData\Local\Programs\Fiddler\Fiddler.exe</HintPath>
+      <HintPath>..\..\..\AppData\Local\Programs\Fiddler\Fiddler.exe</HintPath>
     </Reference>
     <Reference Include="Microsoft.ApplicationInsights, Version=2.8.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ApplicationInsights.2.8.1\lib\net46\Microsoft.ApplicationInsights.dll</HintPath>
@@ -52,10 +52,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Inspectors\EXOResponseInspector.cs" />
     <Compile Include="Services\ActivationService.cs" />
     <Compile Include="CheckForAppUpdate.cs" />
-    <Compile Include="SessionProcessor.cs" />
     <Compile Include="ColumnsUI.cs" />
     <Compile Include="Inspectors\EXOInspector.cs" />
     <Compile Include="MenuUI.cs" />
@@ -71,6 +69,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="SessionProcessor.cs" />
     <Compile Include="UI\EXOResponseControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -78,7 +77,6 @@
       <DependentUpon>EXOResponseControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Services\TelemetryService.cs" />
-    <Compile Include="SessionRuleSet.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -107,13 +105,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetPath)" "%25userprofile%25\AppData\Local\Programs\Fiddler\Scripts\$(TargetFilename)"
-copy "$(TargetPath)" "%25userprofile%25\AppData\Local\Programs\Fiddler\Inspectors\$(TargetFilename)"
-
-copy "$(TargetDir)\Microsoft.ApplicationInsights.dll" "%25userprofile%25\AppData\Local\Programs\Fiddler\Scripts\Microsoft.ApplicationInsights.dll"
-copy "$(TargetDir)\Microsoft.ApplicationInsights.xml" "%25userprofile%25\AppData\Local\Programs\Fiddler\Scripts\Microsoft.ApplicationInsights.xml"
-
-copy "$(TargetDir)\Microsoft.ApplicationInsights.dll" "%25userprofile%25\AppData\Local\Programs\Fiddler\Inspectors\Microsoft.ApplicationInsights.dll"
-copy "$(TargetDir)\Microsoft.ApplicationInsights.xml" "%25userprofile%25\AppData\Local\Programs\Fiddler\Inspectors\Microsoft.ApplicationInsights.xml"</PostBuildEvent>
+    <PostBuildEvent>xcopy /y /s "$(TargetDir)*.*" "%25userprofile%25\AppData\Local\Programs\Fiddler\Scripts"
+xcopy /y /s "$(TargetDir)*.*" "%25userprofile%25\AppData\Local\Programs\Fiddler\Inspectors"</PostBuildEvent>
   </PropertyGroup>
 </Project>

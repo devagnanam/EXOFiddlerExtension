@@ -11,22 +11,14 @@ using EXOFiddlerInspector.Services;
 namespace EXOFiddlerInspector.Inspectors
 {
     /// <summary>
-    /// Base class, generic inspector, common between request and response
+    /// Base class, generic inspector
      /// </summary>
-    public abstract class EXOInspector : Inspector2
+    public class EXOInspector : Inspector2, IResponseInspector2
     {
-        public Boolean bExtensionEnabled = FiddlerApplication.Prefs.GetBoolPref("extensions.EXOFiddlerExtension.enabled", false);
-        public Boolean bElapsedTimeColumnEnabled = FiddlerApplication.Prefs.GetBoolPref("extensions.EXOFiddlerExtension.ElapsedTimeColumnEnabled", false);
-        public Boolean bResponseServerColumnEnabled = FiddlerApplication.Prefs.GetBoolPref("extensions.EXOFiddlerExtension.ResponseServerColumnEnabled", false);
-        public Boolean bExchangeTypeColumnEnabled = FiddlerApplication.Prefs.GetBoolPref("extensions.EXOFiddlerExtension.ExchangeTypeColumnEnabled", false);
-        public Boolean bHostIPColumnEnabled = FiddlerApplication.Prefs.GetBoolPref("extensions.EXOFiddlerExtension.HostIPColumnEnabled", false);
-        public Boolean bAuthColumnEnabled = FiddlerApplication.Prefs.GetBoolPref("extensions.EXOFiddlerExtension.AuthColumnEnabled", false);
-        public Boolean bAppLoggingEnabled = FiddlerApplication.Prefs.GetBoolPref("extensions.EXOFiddlerExtension.AppLoggingEnabled", false);
-        public Boolean bHighlightOutlookOWAOnlyEnabled = FiddlerApplication.Prefs.GetBoolPref("extensions.EXOFiddlerExtension.HighlightOutlookOWAOnlyEnabled", false);
-        public int iExecutionCount = FiddlerApplication.Prefs.GetInt32Pref("extensions.EXOFiddlerExtension.ExecutionCount", 0);
+        public EXOInspector()
+        {
 
-        public Boolean Developer;
-
+        }
         /// <summary>
         /// Gets or sets the control collection where displayed the MAPI parsed message and corresponding hex data.
         /// </summary>
@@ -41,6 +33,19 @@ namespace EXOFiddlerInspector.Inspectors
         /// Gets or sets the base HTTP headers assigned by the request or response
         /// </summary>
         public HTTPHeaders BaseHeaders { get; set; }
+
+        public HTTPResponseHeaders headers
+        {
+            get
+            {
+                return this.BaseHeaders as HTTPResponseHeaders;
+            }
+
+            set
+            {
+                this.BaseHeaders = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the body byte[], called by Fiddler with session byte[]
@@ -286,7 +291,7 @@ namespace EXOFiddlerInspector.Inspectors
                             Environment.NewLine +
                             "ServerDoneResponse == Fiddler is aware of when it was was able to complete sending the server response back to the application which made the request.";
 
-                        if (bAppLoggingEnabled)
+                        if (Preferences.AppLoggingEnabled)
                         {
                             FiddlerApplication.Log.LogString("EXOFiddlerExtention: " + this.session.id + " Long running session.");
                         }
@@ -353,7 +358,7 @@ namespace EXOFiddlerInspector.Inspectors
                             "ServerBeginResponse == Fiddler is aware of when the server started to send the response." +
                             Environment.NewLine +
                             "ServerDoneResponse == Fiddler is aware of when it was was able to complete sending the server response back to the application which made the request.";
-                        if (bAppLoggingEnabled)
+                        if (Preferences.AppLoggingEnabled)
                         {
                             FiddlerApplication.Log.LogString("EXOFiddlerExtention: " + this.session.id + " Long running EXO session.");
                         }

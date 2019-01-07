@@ -15,21 +15,40 @@ namespace EXOFiddlerInspector.Services
     /// </summary>
     public abstract class ActivationService : IAutoTamper
     {
-        internal Session session { get; set; }
-      
         /// <summary>
-        /// This should be consider the main constructor for the app.
+        /// This should be consider the main constructor for the app. It's called after the UI has loaded.
         /// </summary>
         public async void OnLoad()
-        {
-            await TelemetryService.InitializeAsync();
+        {   
+            MenuUI.Instance.Initialize();
+            ColumnsUI.Instance.Initialize();
+            SessionProcessor.Instance.Initialize();
 
-            MenuUI.Instance.FirstRunEnableMenuOptions();
-            
+
+            FiddlerApplication.UI.lvSessions.AddBoundColumn("Response Server", 0, 130, "X-ResponseServer");
+            FiddlerApplication.UI.lvSessions.AddBoundColumn("Host IP", 0, 110, "X-HostIP");
+            FiddlerApplication.UI.lvSessions.AddBoundColumn("Authentication", 0, 140, "X-Authentication");
+            FiddlerApplication.UI.lvSessions.AddBoundColumn("Exchange Type", 0, 150, "X-ExchangeType");
+
+            //FiddlerApplication.UI.lvSessions.SetColumnOrderAndWidth("Response Server", 5, -1);
+            //FiddlerApplication.UI.lvSessions.SetColumnOrderAndWidth("Host IP", 4, -1);
+            //FiddlerApplication.UI.lvSessions.SetColumnOrderAndWidth("Authentication", 3, -1);
+            //FiddlerApplication.UI.lvSessions.SetColumnOrderAndWidth("Exchange Type", 2, -1);
+            //FiddlerApplication.UI.lvSessions.SetColumnOrderAndWidth("Result", 1, -1);
+            //FiddlerApplication.UI.lvSessions.SetColumnOrderAndWidth("#", 0, -1);
+
+
+            //FiddlerApplication.UI.lvSessions.SetColumnOrderAndWidth("Elapsed Time", 2, -1);
+
+
             // Throw a message box to alert demo mode is running.
             if (Preferences.GetDeveloperMode())
             {
-                MessageBox.Show("Developer / Demo mode is running!");
+               // MessageBox.Show("Developer / Demo mode is running!");
+            }
+            else
+            {
+                await TelemetryService.InitializeAsync();
             }
 
         }
@@ -39,44 +58,61 @@ namespace EXOFiddlerInspector.Services
             await TelemetryService.FlushClientAsync();
         }
 
-        public void AutoTamperRequestAfter(Session oSession) { }
+        /// <summary>
+        /// Called for each HTTP/HTTPS request after it's complete.
+        /// </summary>
+        /// <param name="_session"></param>
+        public void AutoTamperRequestAfter(Session _session) { }
 
-        public void AutoTamperRequestBefore(Session oSession) { }
+        /// <summary>
+        /// Called for each HTTP/HTTPS request before it's complete.
+        /// </summary>
+        /// <param name="_session"></param>
+        public void AutoTamperRequestBefore(Session _session) { }
 
-        public void AutoTamperResponseAfter(Session oSession)
+        /// <summary>
+        /// Called for each HTTP/HTTPS response after it's complete.
+        /// </summary>
+        /// <param name="_session"></param>
+        public void AutoTamperResponseAfter(Session _session)
         {
-            ColumnsUI.Instance.AddAllEnabledColumns();
-            ColumnsUI.Instance.OrderColumns();
+            if (!Preferences.ExtensionEnabled)
+            {
+                return;
+            }
+
+            SessionProcessor.Instance.OnPeekAtResponseHeaders(_session);
+            _session.RefreshUI();
 
             // Call the function to populate the session type column on live trace, if the column is enabled.
-            if (Preferences.ExchangeTypeColumnEnabled && Preferences.ExtensionEnabled)
+            if (Preferences.ExchangeTypeColumnEnabled)
             {
-                SessionRuleSet.Instance.SetExchangeType(this.session);
+                SessionProcessor.Instance.SetExchangeType(_session);
             }
 
             // Call the function to populate the session type column on live trace, if the column is enabled.
-            if (Preferences.ResponseServerColumnEnabled && Preferences.ExtensionEnabled)
+            if (Preferences.ResponseServerColumnEnabled)
             {
-                SessionRuleSet.Instance.SetResponseServer(this.session);
+                SessionProcessor.Instance.SetResponseServer(_session);
             }
 
             // Call the function to populate the Authentication column on live trace, if the column is enabled.
-            if (Preferences.AuthColumnEnabled && Preferences.ExtensionEnabled)
+            if (Preferences.AuthColumnEnabled)
             {
-                SessionRuleSet.Instance.SetAuthentication(this.session);
+                SessionProcessor.Instance.SetAuthentication(_session);
             }
         }
 
-        public void AutoTamperResponseBefore(Session session) { }
+        /// <summary>
+        /// Called for each HTTP/HTTPS response before it's complete.
+        /// </summary>
+        /// <param name="_session"></param>
+        public void AutoTamperResponseBefore(Session _session) { }
 
-        public void OnBeforeReturningError(Session oSession) { }
-
-        public static string GetAppVersion()
-        {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-
-            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-            return fileVersionInfo.FileVersion;
-        }
+        /// <summary>
+        /// Called for each HTTP/HTTPS error response before it's complete.
+        /// </summary>
+        /// <param name="_session"></param>
+        public void OnBeforeReturningError(Session _session) { }      
     }
 }

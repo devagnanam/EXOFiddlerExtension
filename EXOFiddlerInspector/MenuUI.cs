@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace EXOFiddlerInspector 
 {
-    public class MenuUI : ActivationService    // Ensure class is public, or Fiddler won't see it!
+    public class MenuUI
     {
         private static MenuUI _instance;
 
@@ -22,14 +22,19 @@ namespace EXOFiddlerInspector
         }
 
         public MenuItem ExchangeOnlineTopMenu;
+
         public MenuItem miColumnsMenu;
 
         public MenuItem miEnabled;
 
         public MenuItem miSeperator1;
+
         public MenuItem miSeperator2;
+
         public MenuItem miSeperator3;
+
         public MenuItem miSeperator4;
+
         public MenuItem miColumnSeperator1;
 
         public MenuItem miColumnsEnableAll;
@@ -55,60 +60,72 @@ namespace EXOFiddlerInspector
         public MenuItem miWiki;
 
         public MenuItem miReportIssues;
+
         private int iExecutionCount;
 
-        public void InitializeMenu()
+        private bool IsInitialized { get; set; }
+
+        public void Initialize()
         {
-            // If the extension is enabled then take the menu title from the Fiddler application preference.
-            if (Preferences.ExtensionEnabled)
+            /// <remarks>
+            /// If this is the first time the extension has been run, make sure all extension options are enabled.
+            /// Beyond do nothing other than keep a running count of the number of extension executions.
+            /// </remarks>
+            /// 
+            if (!IsInitialized)
             {
-                this.ExchangeOnlineTopMenu = new MenuItem(FiddlerApplication.Prefs.GetStringPref("extensions.EXOFiddlerExtension.MenuTitle", "Exchange Online"));
-            }
-            // If th extension is disabled then use this instead.
-            else
-            {
-                this.ExchangeOnlineTopMenu = new MenuItem("Exchange Online (Disabled)");
-            }
 
-            this.miEnabled = new MenuItem("&Extension Enabled");
-            this.miEnabled.Index = 0;
+                FiddlerApplication.Prefs.SetInt32Pref("extensions.EXOFiddlerExtension.ExecutionCount", iExecutionCount);
+                // If the extension is enabled then take the menu title from the Fiddler application preference.
+                if (Preferences.ExtensionEnabled)
+                {
+                    this.ExchangeOnlineTopMenu = new MenuItem(FiddlerApplication.Prefs.GetStringPref("extensions.EXOFiddlerExtension.MenuTitle", "Exchange Online"));
+                }
+                // If th extension is disabled then use this instead.
+                else
+                {
+                    this.ExchangeOnlineTopMenu = new MenuItem("Exchange Online (Disabled)");
+                }
 
-            this.miSeperator1 = new MenuItem("-");
-            this.miSeperator1.Index = 1;
+                this.miEnabled = new MenuItem("&Extension Enabled");
+                this.miEnabled.Index = 0;
 
-            this.miColumnsMenu = new MenuItem("&Columns (Off/On)");
-            this.miColumnsMenu.Index = 2;
+                this.miSeperator1 = new MenuItem("-");
+                this.miSeperator1.Index = 1;
 
-            this.miSeperator2 = new MenuItem("-");
-            this.miSeperator2.Index = 3;
+                this.miColumnsMenu = new MenuItem("&Columns (Off/On)");
+                this.miColumnsMenu.Index = 2;
 
-            this.miAppLoggingEnabled = new MenuItem("Application &Logging Enabled");
-            this.miAppLoggingEnabled.Index = 4;
+                this.miSeperator2 = new MenuItem("-");
+                this.miSeperator2.Index = 3;
 
-            this.miHighlightOutlookOWAOnly = new MenuItem("&Highlight Outlook and OWA Only");
-            this.miHighlightOutlookOWAOnly.Index = 5;
+                this.miAppLoggingEnabled = new MenuItem("Application &Logging Enabled");
+                this.miAppLoggingEnabled.Index = 4;
 
-            this.miSeperator3 = new MenuItem("-");
-            this.miSeperator3.Index = 6;
+                this.miHighlightOutlookOWAOnly = new MenuItem("&Highlight Outlook and OWA Only");
+                this.miHighlightOutlookOWAOnly.Index = 5;
 
-            this.miReleasesDownloadWebpage = new MenuItem("&Releases Download Page");
-            this.miReleasesDownloadWebpage.Index = 7;
+                this.miSeperator3 = new MenuItem("-");
+                this.miSeperator3.Index = 6;
 
-            this.miWiki = new MenuItem("Extension &Wiki");
-            this.miWiki.Index = 8;
+                this.miReleasesDownloadWebpage = new MenuItem("&Releases Download Page");
+                this.miReleasesDownloadWebpage.Index = 7;
 
-            this.miReportIssues = new MenuItem("&Report Issues");
-            this.miReportIssues.Index = 9;
+                this.miWiki = new MenuItem("Extension &Wiki");
+                this.miWiki.Index = 8;
+
+                this.miReportIssues = new MenuItem("&Report Issues");
+                this.miReportIssues.Index = 9;
 
 
-            this.miSeperator4 = new MenuItem("-");
-            this.miSeperator4.Index = 10;
+                this.miSeperator4 = new MenuItem("-");
+                this.miSeperator4.Index = 10;
 
-            this.miCheckForUpdate = new MenuItem("&Check For Update");
-            this.miCheckForUpdate.Index = 11;
+                this.miCheckForUpdate = new MenuItem("&Check For Update");
+                this.miCheckForUpdate.Index = 11;
 
-            // Add menu items to top level menu.
-            this.ExchangeOnlineTopMenu.MenuItems.AddRange(new MenuItem[] { this.miEnabled,
+                // Add menu items to top level menu.
+                this.ExchangeOnlineTopMenu.MenuItems.AddRange(new MenuItem[] { this.miEnabled,
                 this.miSeperator1,
                 this.miColumnsMenu,
                 this.miSeperator2,
@@ -122,31 +139,31 @@ namespace EXOFiddlerInspector
                 this.miCheckForUpdate
             });
 
-            // Columns menu items.
+                // Columns menu items.
 
-            this.miColumnsEnableAll = new MenuItem("Enable &All");
-            this.miColumnsEnableAll.Index = 0;
+                this.miColumnsEnableAll = new MenuItem("Enable &All");
+                this.miColumnsEnableAll.Index = 0;
 
-            this.miColumnSeperator1 = new MenuItem("-");
-            this.miColumnSeperator1.Index = 1;
+                this.miColumnSeperator1 = new MenuItem("-");
+                this.miColumnSeperator1.Index = 1;
 
-            this.miElapsedTimeColumnEnabled = new MenuItem("Elapsed &Time (Load SAZ only)");
-            this.miElapsedTimeColumnEnabled.Index = 2;
+                this.miElapsedTimeColumnEnabled = new MenuItem("Elapsed &Time (Load SAZ only)");
+                this.miElapsedTimeColumnEnabled.Index = 2;
 
-            this.miResponseServerColumnEnabled = new MenuItem("Response &Server");
-            this.miResponseServerColumnEnabled.Index = 3;
+                this.miResponseServerColumnEnabled = new MenuItem("Response &Server");
+                this.miResponseServerColumnEnabled.Index = 3;
 
-            this.miExchangeTypeColumnEnabled = new MenuItem("Exchange T&ype");
-            this.miExchangeTypeColumnEnabled.Index = 4;
+                this.miExchangeTypeColumnEnabled = new MenuItem("Exchange T&ype");
+                this.miExchangeTypeColumnEnabled.Index = 4;
 
-            this.miHostIPColumnEnabled = new MenuItem("&Host IP");
-            this.miHostIPColumnEnabled.Index = 5;
+                this.miHostIPColumnEnabled = new MenuItem("&Host IP");
+                this.miHostIPColumnEnabled.Index = 5;
 
-            this.miAuthColumnEnabled = new MenuItem("A&uthentication");
-            this.miAuthColumnEnabled.Index = 6;
+                this.miAuthColumnEnabled = new MenuItem("A&uthentication");
+                this.miAuthColumnEnabled.Index = 6;
 
-            this.miColumnsMenu.MenuItems.AddRange(new MenuItem[]
-            {
+                this.miColumnsMenu.MenuItems.AddRange(new MenuItem[]
+                {
                 this.miColumnsEnableAll,
                 this.miColumnSeperator1,
                 this.miElapsedTimeColumnEnabled,
@@ -154,43 +171,49 @@ namespace EXOFiddlerInspector
                 this.miExchangeTypeColumnEnabled,
                 this.miHostIPColumnEnabled,
                 this.miAuthColumnEnabled
-            });
+                });
 
-            // Setup event handlers for menu items.
-            this.miEnabled.Click += new System.EventHandler(this.miEnabled_Click);
-            this.miEnabled.Checked = Preferences.ExtensionEnabled;
+                // Setup event handlers for menu items.
+                this.miEnabled.Click += new System.EventHandler(this.miEnabled_Click);
+                this.miEnabled.Checked = Preferences.ExtensionEnabled;
 
-            this.miColumnsEnableAll.Click += new System.EventHandler(this.miColumnsEnableAll_Click);
-            this.miColumnsEnableAll.Checked = Preferences.ColumnsAllEnabled;
+                this.miColumnsEnableAll.Click += new System.EventHandler(this.miColumnsEnableAll_Click);
+                this.miColumnsEnableAll.Checked = Preferences.ColumnsAllEnabled;
 
-            this.miElapsedTimeColumnEnabled.Click += new System.EventHandler(this.miElapsedTimeColumnEnabled_Click);
-            this.miElapsedTimeColumnEnabled.Checked = Preferences.ElapsedTimeColumnEnabled;
+                this.miElapsedTimeColumnEnabled.Click += new System.EventHandler(this.miElapsedTimeColumnEnabled_Click);
+                this.miElapsedTimeColumnEnabled.Checked = Preferences.ElapsedTimeColumnEnabled;
 
-            this.miResponseServerColumnEnabled.Click += new System.EventHandler(this.miResponseServerColumnEnabled_Click);
-            this.miResponseServerColumnEnabled.Checked = Preferences.ResponseServerColumnEnabled;
+                this.miResponseServerColumnEnabled.Click += new System.EventHandler(this.miResponseServerColumnEnabled_Click);
+                this.miResponseServerColumnEnabled.Checked = Preferences.ResponseServerColumnEnabled;
 
-            this.miExchangeTypeColumnEnabled.Click += new System.EventHandler(this.miExchangeTypeColumnEnabled_Click);
-            this.miExchangeTypeColumnEnabled.Checked = Preferences.ExchangeTypeColumnEnabled;
+                this.miExchangeTypeColumnEnabled.Click += new System.EventHandler(this.miExchangeTypeColumnEnabled_Click);
+                this.miExchangeTypeColumnEnabled.Checked = Preferences.ExchangeTypeColumnEnabled;
 
-            this.miHostIPColumnEnabled.Click += new System.EventHandler(this.miHostIPColumnEnabled_Click);
-            this.miHostIPColumnEnabled.Checked = Preferences.HostIPColumnEnabled;
+                this.miHostIPColumnEnabled.Click += new System.EventHandler(this.miHostIPColumnEnabled_Click);
+                this.miHostIPColumnEnabled.Checked = Preferences.HostIPColumnEnabled;
 
-            this.miAuthColumnEnabled.Click += new System.EventHandler(this.miAuthColumnEnabled_Click);
-            this.miAuthColumnEnabled.Checked = Preferences.AuthColumnEnabled;
+                this.miAuthColumnEnabled.Click += new System.EventHandler(this.miAuthColumnEnabled_Click);
+                this.miAuthColumnEnabled.Checked = Preferences.AuthColumnEnabled;
 
-            this.miAppLoggingEnabled.Click += new System.EventHandler(this.miAppLoggingEnabled_Click);
-            this.miAppLoggingEnabled.Checked = Preferences.AppLoggingEnabled;
+                this.miAppLoggingEnabled.Click += new System.EventHandler(this.miAppLoggingEnabled_Click);
+                this.miAppLoggingEnabled.Checked = Preferences.AppLoggingEnabled;
 
-            this.miHighlightOutlookOWAOnly.Click += new System.EventHandler(this.miHighlightOutlookOWAOnly_click);
-            this.miHighlightOutlookOWAOnly.Checked = Preferences.HighlightOutlookOWAOnlyEnabled;
+                this.miHighlightOutlookOWAOnly.Click += new System.EventHandler(this.miHighlightOutlookOWAOnly_click);
+                this.miHighlightOutlookOWAOnly.Checked = Preferences.HighlightOutlookOWAOnlyEnabled;
 
-            this.miWiki.Click += new System.EventHandler(this.miWiki_Click);
+                this.miWiki.Click += new System.EventHandler(this.miWiki_Click);
 
-            this.miReleasesDownloadWebpage.Click += new System.EventHandler(this.miReleasesDownloadWebpage_click);
+                this.miReleasesDownloadWebpage.Click += new System.EventHandler(this.miReleasesDownloadWebpage_click);
 
-            this.miReportIssues.Click += new System.EventHandler(this.miReportIssues_Click);
+                this.miReportIssues.Click += new System.EventHandler(this.miReportIssues_Click);
 
-            this.miCheckForUpdate.Click += new System.EventHandler(this.miCheckForUpdate_Click);
+                this.miCheckForUpdate.Click += new System.EventHandler(this.miCheckForUpdate_Click);
+
+                FiddlerApplication.UI.mnuMain.MenuItems.Add(this.ExchangeOnlineTopMenu);
+                this.SetEnableAllMenuItem();
+
+                IsInitialized = true;
+            }
         }
 
         public void SetEnableAllMenuItem()
@@ -207,6 +230,9 @@ namespace EXOFiddlerInspector
             //FiddlerApplication.Prefs.SetBoolPref("extensions.EXOFiddlerExtension.ElapsedTimeColumnEnabled", boolElapsedTimeColumnEnabled);
             //FiddlerApplication.Prefs.SetBoolPref("extensions.EXOFiddlerExtension.ResponseServerColumnEnabled", boolResponseServerColumnEnabled);
             //FiddlerApplication.Prefs.SetBoolPref("extensions.EXOFiddlerExtension.ExchangeTypeColumnEnabled", boolExchangeTypeColumnEnabled);
+
+
+          
         }
 
         // Menu item event handlers.
@@ -219,7 +245,7 @@ namespace EXOFiddlerInspector
             // Set the application preference for this option.
             FiddlerApplication.Prefs.SetBoolPref("extensions.EXOFiddlerExtension.enabled", Preferences.ExtensionEnabled);
 
-            TelemetryService.TrackEvent($"ExtensionIsEnabled_{miEnabled.Checked}");
+            //TelemetryService.TrackEvent($"ExtensionIsEnabled_{miEnabled.Checked}");
         }
 
         // Enable/disable all columns.
@@ -346,81 +372,6 @@ namespace EXOFiddlerInspector
             FiddlerApplication.Prefs.SetBoolPref("extensions.EXOFiddlerExtension.HighlightOutlookOWAOnlyEnabled", Preferences.HighlightOutlookOWAOnlyEnabled);
         }
 
-        public void OnLoad()
-        {
-            FirstRunEnableMenuOptions();
-            InitializeMenu();
-            FiddlerApplication.UI.mnuMain.MenuItems.Add(this.ExchangeOnlineTopMenu);
-            this.SetEnableAllMenuItem();
-        }
-
-        /////////////////
-        // Read out an application preference and if not set we know this is the first 
-        // time the extension has run on this machine. Enable all options to light up functionality
-        // for first time users.
-        public void FirstRunEnableMenuOptions()
-        {
-            /////////////////
-            /// <remarks>
-            /// If this is the first time the extension has been run, make sure all extension options are enabled.
-            /// Beyond do nothing other than keep a running count of the number of extension executions.
-            /// </remarks>
-            /// 
-            if (FiddlerApplication.Prefs.GetInt32Pref("extensions.EXOFiddlerExtension.ExecutionCount", 0) == 0)
-            {
-                // Set the preferences up for the extension, enable the extension options as this is the first run.
-                /// <remarks>
-                /// Set the runtime variables up for this execution of Fiddler. 
-                /// Also set the Fiddler Application Preferences for the next execution.
-                /// </remarks>
-
-                FiddlerApplication.Prefs.SetBoolPref("extensions.EXOFiddlerExtension.enabled", true);
-                //Preferences.ExtensionEnabled = true;
-                //this.miEnabled.Checked = true;
-                FiddlerApplication.Prefs.SetBoolPref("extensions.EXOFiddlerExtension.ColumnsEnableAll", true);
-                //Preferences.bColumnsEnableAllEnabled = true;
-                //this.miColumnsEnableAll.Checked = true;
-                FiddlerApplication.Prefs.SetBoolPref("extensions.EXOFiddlerExtension.ElapsedTimeColumnEnabled", true);
-                //bElapsedTimeColumnEnabled = true;
-                //this.miElapsedTimeColumnEnabled.Checked = true;
-                FiddlerApplication.Prefs.SetBoolPref("extensions.EXOFiddlerExtension.ResponseServerColumnEnabled", true);
-                //bResponseServerColumnEnabled = true;
-                //this.miResponseServerColumnEnabled.Checked = true;
-                FiddlerApplication.Prefs.SetBoolPref("extensions.EXOFiddlerExtension.ExchangeTypeColumnEnabled", true);
-                //bExchangeTypeColumnEnabled = true;
-                FiddlerApplication.Prefs.SetBoolPref("extensions.EXOFiddlerExtension.AuthColumnEnabled", true);
-                //this.miExchangeTypeColumnEnabled.Checked = true;
-                FiddlerApplication.Prefs.SetBoolPref("extensions.EXOFiddlerExtension.HostIPColumnEnabled", true);
-
-                FiddlerApplication.Prefs.SetBoolPref("extensions.EXOFiddlerExtension.AppLoggingEnabled", true);
-                //bAppLoggingEnabled = true;
-                //this.miAppLoggingEnabled.Checked = true;
-                FiddlerApplication.Prefs.SetBoolPref("extensions.EXOFiddlerExtension.HighlightOutlookOWAOnlyEnabled", true);
-                //bHighlightOutlookOWAOnlyEnabled = true;
-                // Increment the int iExecutionCount.
-                iExecutionCount = FiddlerApplication.Prefs.GetInt32Pref("extensions.EXOFiddlerExtension.ExecutionCount", 0);
-                iExecutionCount++;
-                // Update the Fiddler Application Preference.
-                FiddlerApplication.Prefs.SetInt32Pref("extensions.EXOFiddlerExtension.ExecutionCount", iExecutionCount);
-            }
-            // If this isn't the first run of the extension, just increnent the running count of executions.
-            else
-            {
-                // Increment the int iExecutionCount.
-                iExecutionCount = FiddlerApplication.Prefs.GetInt32Pref("extensions.EXOFiddlerExtension.ExecutionCount", 0);
-                iExecutionCount++;
-                // Update the Fiddler Application Preference.
-                FiddlerApplication.Prefs.SetInt32Pref("extensions.EXOFiddlerExtension.ExecutionCount", iExecutionCount);
-            }
-            ///
-            /////////////////
-        }
-        //
-        /////////////////
-
-        public void OnBeforeUnload()
-        {
-            //throw new NotImplementedException();
-        }
+       
     }
 }
