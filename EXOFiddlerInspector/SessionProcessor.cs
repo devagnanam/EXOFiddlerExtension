@@ -37,7 +37,7 @@ namespace EXOFiddlerInspector
             {
                 FiddlerApplication.OnLoadSAZ += HandleLoadSaz;
 
-                ColumnsUI.Instance.OrderColumns();
+               // ColumnsUI.Instance.OrderColumns();
 
                 IsInitialized = true;
             }
@@ -52,8 +52,8 @@ namespace EXOFiddlerInspector
         {
             FiddlerApplication.Prefs.SetBoolPref("extensions.EXOFiddlerExtension.LoadSaz", true);
 
-            ColumnsUI.Instance.AddAllEnabledColumns();
-            ColumnsUI.Instance.OrderColumns();
+            //ColumnsUI.Instance.AddAllEnabledColumns();
+           // ColumnsUI.Instance.OrderColumns();
 
             FiddlerApplication.UI.lvSessions.BeginUpdate();
 
@@ -1416,7 +1416,6 @@ namespace EXOFiddlerInspector
         public void SetResponseServer(Session session)
         {
             this.session = session;
-
             // Populate Response Server on session in order of preference from common to obsure.
 
             // If the response server header is not null or blank then populate it into the response server value.

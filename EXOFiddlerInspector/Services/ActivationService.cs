@@ -24,11 +24,7 @@ namespace EXOFiddlerInspector.Services
             ColumnsUI.Instance.Initialize();
             SessionProcessor.Instance.Initialize();
 
-
-            FiddlerApplication.UI.lvSessions.AddBoundColumn("Response Server", 0, 130, "X-ResponseServer");
-            FiddlerApplication.UI.lvSessions.AddBoundColumn("Host IP", 0, 110, "X-HostIP");
-            FiddlerApplication.UI.lvSessions.AddBoundColumn("Authentication", 0, 140, "X-Authentication");
-            FiddlerApplication.UI.lvSessions.AddBoundColumn("Exchange Type", 0, 150, "X-ExchangeType");
+           
 
             //FiddlerApplication.UI.lvSessions.SetColumnOrderAndWidth("Response Server", 5, -1);
             //FiddlerApplication.UI.lvSessions.SetColumnOrderAndWidth("Host IP", 4, -1);
@@ -87,19 +83,35 @@ namespace EXOFiddlerInspector.Services
             // Call the function to populate the session type column on live trace, if the column is enabled.
             if (Preferences.ExchangeTypeColumnEnabled)
             {
+               // ColumnsUI.Instance.EnsureExchangeTypeColumn();
+
                 SessionProcessor.Instance.SetExchangeType(_session);
             }
 
             // Call the function to populate the session type column on live trace, if the column is enabled.
             if (Preferences.ResponseServerColumnEnabled)
             {
+               // FiddlerApplication.UI.lvSessions.AddBoundColumn("Response Server", 0, 130, "X-ResponseServer");
+
                 SessionProcessor.Instance.SetResponseServer(_session);
             }
 
             // Call the function to populate the Authentication column on live trace, if the column is enabled.
             if (Preferences.AuthColumnEnabled)
             {
+                //FiddlerApplication.UI.lvSessions.AddBoundColumn("Authentication", 0, 140, "X-Authentication");
+
                 SessionProcessor.Instance.SetAuthentication(_session);
+            }
+
+            if (Preferences.HostIPColumnEnabled)
+            {
+                //FiddlerApplication.UI.lvSessions.AddBoundColumn("Host IP", 0, 110, "X-HostIP");
+            }
+
+            if (_session.id == 1)
+            {
+                ColumnsUI.Instance.AddAllEnabledColumns();
             }
         }
 
