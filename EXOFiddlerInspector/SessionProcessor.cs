@@ -122,10 +122,6 @@ namespace EXOFiddlerInspector
         /////////////////
         #endregion
 
-     
-
-
-
         public void OnPeekAtResponseHeaders(Session session)
         {
             // Reset these session counters.
